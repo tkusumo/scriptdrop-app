@@ -20,8 +20,8 @@ class Courier extends Component {
     };
 
     signOut = () => {
-        localStorage.setItem("authenticated", "false");
-        localStorage.setItem("user", "");
+        localStorage.setItem("Courier_authenticated", "false");
+        localStorage.setItem("Courier_user", "");
         this.setState({ signOutClicked: true });
     };
 
@@ -104,7 +104,7 @@ class Courier extends Component {
                                 <Icon style={{ fontSize: 40 }}>keyboard_arrow_right</Icon>
                             </IconButton>
                         </div>
-                        <PackagesTable packagesDate={this.state.displayDate} />
+                        { (localStorage.getItem("Courier_authenticated") !== "false") ?<PackagesTable packagesDate={this.state.displayDate} /> : null }
                     </div>
 
                     <Route path="/Login" component={Login} />

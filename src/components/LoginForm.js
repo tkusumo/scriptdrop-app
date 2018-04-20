@@ -29,8 +29,17 @@ class LoginForm extends Component {
     componentDidMount() {
         //localStorage.setItem("pharmacies", JSON.stringify(Pharmacies));
         //localStorage.setItem("couriers", JSON.stringify(Couriers));
-        //console.log(JSON.parse(localStorage.getItem("users")));
+        //console.log(JSON.parse(localStorage.getItem("Pharmacy_user")), JSON.parse(localStorage.getItem("Pharmacy_authenticated")));
         //localStorage.removeItem("users");
+        //localStorage.setItem("users", JSON.stringify(Users));
+        //localStorage.removeItem("Pharmacy_user");
+        //localStorage.removeItem("Courier_user");
+        //localStorage.removeItem("user");
+        //localStorage.removeItem("authenticated");
+        //localStorage.removeItem("Admin_authenticated");
+        //localStorage.removeItem("Admin_authenticated");
+        //localStorage.removeItem("Pharmacy_authenticated");
+        //localStorage.removeItem("Courier_authenticated");
         //localStorage.setItem("users", JSON.stringify(Users));
         //localStorage.removeItem("orders");
         //localStorage.setItem("orders", JSON.stringify(Orders));
@@ -152,6 +161,7 @@ const materialStyles = theme => ({
         justifyContent: 'center',
         alignItems: 'center',
         flexDirection: 'column',
+        backgroundColor: '#B3E5FC',
     }),
     textField: {
         marginLeft: theme.spacing.unit,

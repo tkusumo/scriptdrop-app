@@ -154,6 +154,16 @@ class OrdersTable extends Component {
         }
     }
 
+    isPickUpDateToday = (dt) => {
+        const orderDate = new Date(dt);
+        
+        if (orderDate.getDate() === new Date().getDate()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     render() {
         const { classes } = this.props;
         return (
@@ -191,7 +201,11 @@ class OrdersTable extends Component {
                                         <TableRow key={order.id}>
                                             <TableCell>
                                                 <Checkbox
-                                                    disabled={(order.delivered_time !== '' || order.undelivered || order.cancelled) ? true : false}
+                                                    disabled={
+                                                        (order.delivered_time !== '' 
+                                                        || order.undelivered 
+                                                        || order.cancelled 
+                                                        || !this.isPickUpDateToday(order.pickup_date)) ? true : false}
                                                     checked={order.picked_up}
                                                     onChange={() => this.pickupOnCheck(order.id)} />
                                             </TableCell>

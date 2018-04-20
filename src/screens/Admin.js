@@ -1,12 +1,17 @@
-import React, { Component } from 'react';import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import Button from 'material-ui/Button';
 import Icon from 'material-ui/Icon';
 import IconButton from 'material-ui/IconButton';
-import Paper from 'material-ui/Paper';
-import Login from './Login';
+import Divider from 'material-ui/Divider';
+import List, { ListItem, ListItemIcon, ListItemText, ListItemSecondaryAction } from 'material-ui/List';
 import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
 import logo from '../assets/scriptdrop.png';
+import Login from './Login';
+import UsersTable from '../components/UsersTable';
+import PharmaciesTable from '../components/PharmaciesTable';
+import CouriersTable from '../components/CouriersTable';
 
 class Admin extends Component {
     state = {
@@ -14,11 +19,18 @@ class Admin extends Component {
         user: {},
         localStorage: '',
         items: [],
+        usersClicked: false,
+        pharmaciesClicked: false,
+        couriersClicked: false,
+        ordersClicked: false,
+        addNewUser: false,
+        addNewPharmacy: false,
+        addNewCourier: false,
     };
 
     signOut = () => {
-        localStorage.setItem("authenticated", "false");
-        localStorage.setItem("user", "");
+        localStorage.setItem("Admin_authenticated", "false");
+        localStorage.setItem("Admin_user", "");
         this.setState({ signOutClicked: true });
     };
 
@@ -35,29 +47,21 @@ class Admin extends Component {
     showLocalStorageItems = (ls) => {
         const lsItems = JSON.parse(localStorage.getItem(ls));
 
-        this.setState({ items: lsItems, localStorage: ls });
+        this.setState(
+            {
+                items: lsItems,
+                localStorage: ls,
+                ordersClicked: true,
+                usersClicked: false,
+                pharmaciesClicked: false,
+                couriersClicked: false,
+            });
     }
 
     renderItems = () => {
         const { items, localStorage } = this.state;
 
-        if (localStorage === 'users') {
-            return (
-                items.map((item) => {
-                    return (
-                        <p key={item.id} style={{ fontSize: 14, fontFamily: 'Lato' }}>
-                            <span style={{ color: "gray" }}>id: </span><span style={{ fontWeight: "bold" }}>{item.id} </span>
-                            <span style={{ color: "gray" }}>first_name: </span><span style={{ fontWeight: "bold" }}>{item.first_name} </span>
-                            <span style={{ color: "gray" }}>last_name: </span><span style={{ fontWeight: "bold" }}>{item.last_name} </span>
-                            <span style={{ color: "gray" }}>username: </span><span style={{ fontWeight: "bold" }}>{item.username} </span>
-                            <span style={{ color: "gray" }}>password: </span><span style={{ fontWeight: "bold" }}>{item.password} </span>
-                            <span style={{ color: "gray" }}>type: </span><span style={{ fontWeight: "bold" }}>{item.type} </span>
-                            <span style={{ color: "gray" }}>type_id: </span><span style={{ fontWeight: "bold" }}>{item.type_id} </span>
-                        </p>
-                    )
-                })
-            )
-        } else if (localStorage === 'orders') {
+        if (localStorage === 'orders') {
             return (
                 items.map((item) => {
                     return (
@@ -76,31 +80,6 @@ class Admin extends Component {
                             <span style={{ color: "gray" }}>picked_up: </span><span style={{ fontWeight: "bold" }}>{item.picked_up ? 'true' : 'false'} </span>
                             <span style={{ color: "gray" }}>cancelled: </span><span style={{ fontWeight: "bold" }}>{item.cancelled ? 'true' : 'false'} </span>
                             <span style={{ color: "gray" }}>undelivered: </span><span style={{ fontWeight: "bold" }}>{item.undelivered ? 'true' : 'false'} </span>
-                        </p>
-                    )
-                })
-            );
-        } else if (localStorage === 'pharmacies') {
-            return (
-                items.map((item) => {
-                    return (
-                        <p key={item.id} style={{ fontSize: 14, fontFamily: 'Lato' }}>
-                            <span style={{ color: "gray" }}>id: </span><span style={{ fontWeight: "bold" }}>{item.id} </span>
-                            <span style={{ color: "gray" }}>name: </span><span style={{ fontWeight: "bold" }}>{item.name} </span>
-                            <span style={{ color: "gray" }}>address: </span><span style={{ fontWeight: "bold" }}>{item.address} </span>
-                            <span style={{ color: "gray" }}>courier_id: </span><span style={{ fontWeight: "bold" }}>{item.courier_id} </span>
-                        </p>
-                    )
-                })
-            );
-        } else if (localStorage === 'couriers') {
-            return (
-                items.map((item) => {
-                    return (
-                        <p key={item.id} style={{ fontSize: 14, fontFamily: 'Lato' }}>
-                            <span style={{ color: "gray" }}>id: </span><span style={{ fontWeight: "bold" }}>{item.id} </span>
-                            <span style={{ color: "gray" }}>name: </span><span style={{ fontWeight: "bold" }}>{item.name} </span>
-                            <span style={{ color: "gray" }}>address: </span><span style={{ fontWeight: "bold" }}>{item.address} </span>
                         </p>
                     )
                 })
@@ -130,31 +109,155 @@ class Admin extends Component {
                     <div className={classes.headerDetailContainer}>
                         <span style={{ padding: 5, color: '#BF360C', fontSize: 14 }}>{user.type}</span>
                         <span style={{ padding: 5 }}>||</span>
-                        <span style={{ padding: 5 }}>{user.first_name} {user.last_name}</span>
+                        <Icon>account_circle</Icon><span style={{ padding: 5 }}>{user.first_name} {user.last_name}</span>
                     </div>
-                    <div style={{ display: 'flex', flexDirection: 'row', textAlign: 'left'  }}>
-                        <div style={{ flex: 1, backgroundColor: 'gray' }}>
+                    <div style={{ display: 'flex', flexDirection: 'row', textAlign: 'left', fontSize: 14, fontFamily: 'Lato' }}>
+                        <div style={{ flex: 1, backgroundColor: '#9FA8DA', paddingTop: 15, }}>
                             <div>
-                                <p style={{ paddingLeft: 10 }}>Show localStorage items</p>
-                                <ul>
-                                    <li><a href="./#" onClick={() => this.showLocalStorageItems("users")}>Users</a></li>
-                                    <li><a href="./#" onClick={() => this.showLocalStorageItems("orders")}>Orders</a></li>
-                                    <li><a href="./#" onClick={() => this.showLocalStorageItems("pharmacies")}>Pharmacy</a></li>
-                                    <li><a href="./#" onClick={() => this.showLocalStorageItems("couriers")}>Courier</a></li>
-                                </ul>
+                                <span style={{ paddingLeft: 10, fontFamily: 'Roboto', fontWeight: 'bold', color: '#424242' }}>
+                                    localStorage items
+                                </span>
+                                <List>
+                                    <ListItem
+                                        button 
+                                        dense
+                                        onClick={() => this.setState(
+                                            {
+                                                usersClicked: true,
+                                                pharmaciesClicked: false,
+                                                couriersClicked: false,
+                                                ordersClicked: false,
+                                                addNewUser: false,
+                                                addNewPharmacy: false,
+                                                addNewCourier: false,
+                                            }
+                                        )}>
+                                        <ListItemIcon>
+                                            <Icon>account_box</Icon>
+                                        </ListItemIcon>
+                                        <ListItemText primary="Users" />
+                                        <ListItemSecondaryAction>
+                                            <IconButton
+                                                aria-label="Add"
+                                                onClick={() => this.setState(
+                                                    { 
+                                                        usersClicked: true,
+                                                        pharmaciesClicked: false,
+                                                        couriersClicked: false,
+                                                        ordersClicked: false,
+                                                        addNewUser: true,
+                                                        addNewPharmacy: false,
+                                                        addNewCourier: false,
+                                                    }
+                                                )}>
+                                                <Icon>add_circle</Icon>
+                                            </IconButton>
+                                        </ListItemSecondaryAction>
+                                    </ListItem>
+                                    <ListItem 
+                                        button 
+                                        dense 
+                                        onClick={() => this.setState(
+                                            {
+                                                usersClicked: false,
+                                                pharmaciesClicked: true,
+                                                couriersClicked: false,
+                                                ordersClicked: false,
+                                                addNewUser: false,
+                                                addNewPharmacy: false,
+                                                addNewCourier: false,
+                                                }
+                                            )}>
+                                        <ListItemIcon>
+                                            <Icon>local_pharmacy</Icon>
+                                        </ListItemIcon>
+                                        <ListItemText primary="Pharmacy" />
+                                        <ListItemSecondaryAction>
+                                            <IconButton
+                                                aria-label="Add"
+                                                onClick={() => this.setState(
+                                                    { 
+                                                        usersClicked: false,
+                                                        pharmaciesClicked: true,
+                                                        couriersClicked: false,
+                                                        ordersClicked: false,
+                                                        addNewUser: false,
+                                                        addNewPharmacy: true,
+                                                        addNewCourier: false,
+                                                    }
+                                                )}>
+                                                <Icon>add_circle</Icon>
+                                            </IconButton>
+                                        </ListItemSecondaryAction>
+                                    </ListItem>
+                                    <ListItem
+                                        button
+                                        dense
+                                        onClick={() => this.setState(
+                                            {
+                                                usersClicked: false,
+                                                pharmaciesClicked: false,
+                                                couriersClicked: true,
+                                                ordersClicked: false,
+                                                addNewUser: false,
+                                                addNewPharmacy: false,
+                                                addNewCourier: false,
+                                                }
+                                            )}>
+                                        <ListItemIcon>
+                                            <Icon>local_shipping</Icon>
+                                        </ListItemIcon>
+                                        <ListItemText primary="Courier" />
+                                        <ListItemSecondaryAction>
+                                            <IconButton
+                                                aria-label="Add"
+                                                onClick={() => this.setState(
+                                                    { 
+                                                        usersClicked: false,
+                                                        pharmaciesClicked: false,
+                                                        couriersClicked: true,
+                                                        ordersClicked: false,
+                                                        addNewUser: false,
+                                                        addNewPharmacy: false,
+                                                        addNewCourier: true,
+                                                    }
+                                                )}>
+                                                <Icon>add_circle</Icon>
+                                            </IconButton>
+                                        </ListItemSecondaryAction>
+                                    </ListItem>
+                                </List>
                             </div>
-                            <div>
-                                <p style={{ paddingLeft: 10 }}>Remove localStorage items</p>
-                                <ul>
-                                    <li>Users</li>
-                                    <li>Orders</li>
-                                    <li>Pharmacy</li>
-                                    <li>Courier</li>
-                                </ul>
+                            <Divider light />
+                            <div style={{ paddingTop: 10 }}>
+                                <span style={{ paddingLeft: 12, fontFamily: 'Roboto', fontWeight: 'bold', color: '#424242' }}>Users</span>
+                                <List>
+                                    <ListItem
+                                        button
+                                        dense
+                                        onClick={() => console.log("Hello")}>
+                                        <ListItemText primary="Active users" />
+                                    </ListItem>
+                                </List>
+                            </div>
+                            <Divider light />
+                            <div style={{ paddingTop: 10 }}>
+                                <span style={{ paddingLeft: 12, fontFamily: 'Roboto', fontWeight: 'bold', color: '#424242' }}>Reports</span>
+                                <List>
+                                    <ListItem button dense onClick={() => this.showLocalStorageItems("orders")}>
+                                        <ListItemText primary="Orders Report by Date" />
+                                    </ListItem>
+                                    <ListItem button dense onClick={() => this.showLocalStorageItems("orders")}>
+                                        <ListItemText primary="Orders Report by Pharmacy" />
+                                    </ListItem>
+                                </List>
                             </div>
                         </div>
                         <div style={{ flex: 5, padding: 10 }}>
-                            {this.renderItems()}
+                            {this.state.usersClicked ? <UsersTable addUser={this.state.addNewUser} /> : null}
+                            {this.state.pharmaciesClicked ? <PharmaciesTable addPharmacy={this.state.addNewPharmacy} /> : null}
+                            {this.state.couriersClicked ? <CouriersTable addCourier={this.state.addNewCourier} /> : null}
+                            {this.state.ordersClicked ? this.renderItems() : null}
                         </div>
                     </div>
 

@@ -23,8 +23,9 @@ class Pharmacy extends Component {
     };
 
     signOut = () => {
-        localStorage.setItem("authenticated", "false");
-        localStorage.setItem("user", "");
+        localStorage.setItem("Pharmacy_authenticated", "false");
+        localStorage.setItem("Pharmacy_user", "none");
+        console.log(localStorage.getItem("Pharmacy_user"), localStorage.getItem("Pharmacy_authenticated"));
         this.setState({ signOutClicked: true });
     };
 
@@ -80,9 +81,9 @@ class Pharmacy extends Component {
                         <Button className={classes.button} onClick={this.signOut}>Sign out</Button>
                     </div>
                     <div className={classes.headerDetailContainer}>
-                        <span style={{ padding: 5, color: '#BF360C', fontSize: 14 }}>{pharmacy.name} {user.type}</span>
+                        <Icon>local_pharmacy</Icon><span style={{ padding: 5, color: '#BF360C', fontSize: 14 }}>{pharmacy.name} {user.type}</span>
                         <span style={{ padding: 5 }}>||</span>
-                        <span style={{ padding: 5 }}>{user.first_name} {user.last_name}</span>
+                        <Icon>account_circle</Icon><span style={{ padding: 5 }}>{user.first_name} {user.last_name}</span>
                     </div>
                     <div>
                         <div className={classes.dateContainer}>
@@ -107,7 +108,7 @@ class Pharmacy extends Component {
                                 <Icon style={{ fontSize: 40 }}>keyboard_arrow_right</Icon>
                             </IconButton>
                         </div>
-                        <OrdersTable ordersDate={this.state.displayDate} />
+                        { (localStorage.getItem("Pharmacy_authenticated") !== "false") ? <OrdersTable ordersDate={this.state.displayDate} /> : null }
                     </div>
 
                     <Route path="/Login" component={Login} />
